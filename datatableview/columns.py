@@ -118,7 +118,7 @@ class Column(six.with_metaclass(ColumnMetaclass)):
             self.sources = [self.sources]
         self.separator = separator
         self.label = label
-        self.empty_value = smart_text(empty_value)
+        self.empty_value = empty_value  # smart_text(empty_value)
         self.localize = localize
         self.sortable = sortable
         self.visible = visible
