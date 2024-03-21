@@ -2,6 +2,17 @@
 
 These logs are also available on GitHub: https://github.com/pivotal-energy-solutions/django-datatable-view/releases
 
+## 0.9.3 [datalive-datatableview]
+- Change import from for FieldDoesNotExist to make Django 3.1 compatible.
+
+## 0.9.2 [datalive-datatableview]
+*This release has been removed, since it was wrong about it's django version requirements and it had only been installed once locally on my machine*
+- Switch from smart_text to smart_str to be compatible with Django 3.0
+- Opened up requirements of dependencies to allow more recent versions (untested)
+
+## 0.9.1 [datalive-datatableview]
+Fix for column.empty_value being converted to string
+
 ## 0.9.0
 This release officially supports Django 1.11, 2.0, and 2.1, and Python 2.7, 3.5, and 3.6.
 
