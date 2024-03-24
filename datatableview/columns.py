@@ -15,17 +15,9 @@ from django.core.exceptions import FieldDoesNotExist
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.encoding import smart_str
 from django.utils.safestring import mark_safe
-try:
-    from django.forms.utils import flatatt
-except ImportError:
-    from django.forms.util import flatatt
+from django.forms.utils import flatatt
 from django.template.defaultfilters import slugify
-try:
-    from django.utils.encoding import python_2_unicode_compatible
-except ImportError:
-    from .compat import python_2_unicode_compatible
 
-import six
 import dateutil.parser
 
 from .utils import resolve_orm_path, DEFAULT_EMPTY_VALUE, DEFAULT_MULTIPLE_SEPARATOR
@@ -85,8 +77,7 @@ class ColumnMetaclass(type):
 
 
 # Corollary to django.forms.fields.Field
-@python_2_unicode_compatible
-class Column(six.with_metaclass(ColumnMetaclass)):
+class Column(metaclass=ColumnMetaclass):
     """ Generic table column using CharField for rendering. """
 
     model_field_class = None
@@ -196,7 +187,7 @@ class Column(six.with_metaclass(ColumnMetaclass)):
                 value = self.empty_value
         elif len(values) > 0:
             plain_value = [v[0] for v in values]
-            rich_value = self.separator.join(map(six.text_type, [v[1] for v in values]))
+            rich_value = self.separator.join(map(str, [v[1] for v in values]))
             value = (plain_value, rich_value)
         else:
             value = self.empty_value
@@ -288,7 +279,7 @@ class Column(six.with_metaclass(ColumnMetaclass)):
         # We avoid making changes that the Django ORM can already do for us
         multi_terms = None
 
-        if isinstance(term, six.text_type):
+        if isinstance(term, str):
             if lookup_type == "in":
                 in_bits = re.split(r',\s*', term)
                 if len(in_bits) > 1:
@@ -410,7 +401,7 @@ class Column(six.with_metaclass(ColumnMetaclass)):
         }
 
         if self.sort_priority is not None:
-            attributes['data-config-sorting'] = ','.join(map(six.text_type, [
+            attributes['data-config-sorting'] = ','.join(map(str, [
                 self.sort_priority,
                 self.index,
                 self.sort_direction,

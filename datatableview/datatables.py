@@ -14,8 +14,6 @@ from django.template.loader import render_to_string
 from django.db.models import QuerySet
 from django.utils.encoding import force_str
 
-import six
-
 
 from .exceptions import ColumnError, SkipRecord
 from .columns import (Column, TextColumn, DateColumn, DateTimeColumn, BooleanColumn, IntegerColumn,
@@ -23,6 +21,7 @@ from .columns import (Column, TextColumn, DateColumn, DateTimeColumn, BooleanCol
 from .utils import (OPTION_NAME_MAP, MINIMUM_PAGE_LENGTH, contains_plural_field, split_terms,
                     resolve_orm_path)
 from .cache import DEFAULT_CACHE_TYPE, cache_types, get_cache_key, cache_data, get_cached_data
+
 
 def pretty_name(name):
     if not name:
@@ -88,7 +87,7 @@ def get_declared_columns(bases, attrs, with_base_columns=True):
     """
     local_columns = [
         (column_name, attrs.pop(column_name)) \
-                for column_name, obj in list(six.iteritems(attrs)) \
+                for column_name, obj in list(attrs.items()) \
                 if isinstance(obj, Column)
     ]
     local_columns.sort(key=lambda x: x[1].creation_counter)
@@ -99,11 +98,11 @@ def get_declared_columns(bases, attrs, with_base_columns=True):
     if with_base_columns:
         for base in bases[::-1]:
             if hasattr(base, 'base_columns'):
-                local_columns = list(six.iteritems(base.base_columns)) + local_columns
+                local_columns = list(base.base_columns.items()) + local_columns
     else:
         for base in bases[::-1]:
             if hasattr(base, 'declared_columns'):
-                local_columns = list(six.iteritems(base.declared_columns)) + local_columns
+                local_columns = list(base.declared_columns.items()) + local_columns
 
     return OrderedDict(local_columns)
 
@@ -155,7 +154,7 @@ class DatatableMetaclass(type):
         if opts.model:
             columns = columns_for_model(opts.model, opts.columns, opts.exclude, opts.labels,
                                         opts.processors, opts.unsortable_columns, opts.hidden_columns)
-            none_model_columns = [k for k, v in six.iteritems(columns) if not v]
+            none_model_columns = [k for k, v in columns.items() if not v]
             missing_columns = set(none_model_columns) - set(declared_columns.keys())
 
             for name, column in declared_columns.items():
@@ -188,7 +187,7 @@ class DatatableMetaclass(type):
                 opts.search_fields = list(opts.search_fields)
             for i, column in enumerate(opts.search_fields):
                 # Build a column object
-                if isinstance(column, six.string_types):
+                if isinstance(column, str):
                     name = column
                     field = resolve_orm_path(opts.model, name)
                     column = get_column_for_modelfield(field)
@@ -205,8 +204,7 @@ class DatatableMetaclass(type):
         return new_class
 
 
-@python_2_unicode_compatible
-class Datatable(six.with_metaclass(DatatableMetaclass)):
+class Datatable(metaclass=DatatableMetaclass):
     """
     Declaration container for a clientside datatable, containing an optional Meta inner class,
     class-level field declarations, and callbacks for filtering and post-processing values requested
@@ -818,10 +816,8 @@ class Datatable(six.with_metaclass(DatatableMetaclass)):
             if isinstance(value, (tuple, list)):
                 value = value[1]
 
-            if six.PY2 and isinstance(value, str):  # not unicode
-                value = value.decode('utf-8')
             if value is not None:
-                value = six.text_type(value)
+                value = str(value)
             data[str(i)] = value
         return data
 
