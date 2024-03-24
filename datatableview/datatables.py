@@ -12,14 +12,7 @@ except ImportError:
 from django.core.exceptions import FieldDoesNotExist
 from django.template.loader import render_to_string
 from django.db.models import QuerySet
-try:
-    from django.utils.encoding import force_text
-except ImportError:
-    from django.utils.encoding import force_unicode as force_text
-try:
-    from django.utils.encoding import python_2_unicode_compatible
-except ImportError:
-    from .compat import python_2_unicode_compatible
+from django.utils.encoding import force_str
 
 import six
 
@@ -874,7 +867,7 @@ class Datatable(six.with_metaclass(DatatableMetaclass)):
 
         column_name = column.name
         if isinstance(self, LegacyDatatable):
-            name = force_text(column.label, errors="ignore")
+            name = force_str(column.label, errors="ignore")
             if not name:
                 name = column.sources[0]
             column_name = re.sub(r'[\W_]+', '_', name)
