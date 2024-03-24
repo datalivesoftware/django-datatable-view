@@ -11,13 +11,19 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 from ..datatables import Datatable, DatatableOptions
 from ..compat import escape_uri_path
+from django.http import HttpRequest
+
+
+def is_jquery_ajax(request: HttpRequest):
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
 
 log = logging.getLogger(__name__)
 
 
 class DatatableJSONResponseMixin(object):
     def dispatch(self, request, *args, **kwargs):
-        if request.is_ajax() or getattr(request, request.method).get('ajax') == 'true':
+        if is_jquery_ajax(request) or getattr(request, request.method).get('ajax') == 'true':
             datatable = self.get_datatable()
             datatable.configure()
             if request.method == datatable.config['request_method']:
