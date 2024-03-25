@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "datalive-datatableview"
-version = "0.9.3"
+version = "0.10.0"
 description = "Fork of pivotal-energy-solutions/django-datatable-view"
 authors = ["Datalive Software <info@datalive.com.au>"]
 license = "Apache License 2.0"

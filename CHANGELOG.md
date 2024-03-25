@@ -2,8 +2,16 @@
 
 These logs are also available on GitHub: https://github.com/pivotal-energy-solutions/django-datatable-view/releases
 
+## 0.10.0 [datalive-datatableview]
+- Add support for Django 4.0
+- Drop support for old versions.  Now requires *Python>=3.8* and *Django>=2.0*.
+- Remove all references to the `six` package as we are no longer need to support Python 2.
+- Replaced all usages of `force_text` with `force_str`, to support django 4.
+- Change usage of `request.is_ajax()` to a custom function.
+
 ## 0.9.3 [datalive-datatableview]
-- Change import from for FieldDoesNotExist to make Django 3.1 compatible.
+Now supports Django 3.1:
+- Change import location for `FieldDoesNotExist`
 
 ## 0.9.2 [datalive-datatableview]
 *This release has been removed, since it was wrong about it's django version requirements and it had only been installed once locally on my machine*
